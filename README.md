@@ -1,12 +1,10 @@
 # ProyectoApp
 
-Es una aplicación desarrollada en **Flutter** que permite gestionar agendas y eventos de manera sencilla y eficiente.
+Es una aplicación desarrollada en **Flutter** que permite gestionar proyectos y tareas de manera sencilla y eficiente.
 
 ## Características
 
-- Crear, editar y eliminar eventos o citas.
-- Visualización de eventos en un calendario.
-- Notificaciones para recordar tus actividades.
+- Crear, editar y eliminar proyectos y tareas.
 - Interfaz intuitiva y amigable para usuarios de todas las edades.
 
 ## Getting Started
