@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "501855881939",
+    "project_id": "koalgenda",
+    "storage_bucket": "koalgenda.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:501855881939:android:0d9006456d935308732226",
+        "android_client_info": {
+          "package_name": "com.example.koalgenda"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3RCpS1qe0Blgag4Kd9OuKd2E3_b2SodI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
