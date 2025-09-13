@@ -2,6 +2,10 @@
 
 Es una aplicación desarrollada en **Flutter** que permite gestionar proyectos y tareas de manera sencilla y eficiente.
 
+## Equipo
+Jared Alexandro Morales Gomez
+Mariana Vázquez De luna
+
 ## Características
 
 - Crear, editar y eliminar proyectos y tareas.
