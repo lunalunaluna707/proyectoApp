@@ -1,16 +1,27 @@
-# koalgenda
+# ProyectoApp
 
-A new Flutter project.
+Es una aplicación desarrollada en **Flutter** que permite gestionar agendas y eventos de manera sencilla y eficiente.
+
+## Características
+
+- Crear, editar y eliminar eventos o citas.
+- Visualización de eventos en un calendario.
+- Notificaciones para recordar tus actividades.
+- Interfaz intuitiva y amigable para usuarios de todas las edades.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Este proyecto es un punto de partida para desarrollar aplicaciones en Flutter.
 
-A few resources to get you started if this is your first Flutter project:
+### Requisitos
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- Flutter SDK: [Instalar Flutter](https://docs.flutter.dev/get-started/install)
+- Android Studio o VS Code
+- Dispositivo o emulador Android/iOS
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### Instalación
+
+1. Clona este repositorio:
+   ```bash
+   git clone https://github.com/lunalunaluna707/proyectoApp.git
+
