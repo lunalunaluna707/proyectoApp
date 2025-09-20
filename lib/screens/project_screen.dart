@@ -1,530 +1,289 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:async';
-import '../widgets/custom_bottom_nav.dart';
-import '../form/proyectos_form_screen.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import '../apiservice.dart';
-import 'detalles_proyecto.dart';
-import 'diagrama_gant.dart';  
-import 'pantallasugerencia.dart';  
-import 'package:intl/intl.dart';
-import 'carrusel.dart';
-import 'estadisticas_panel.dart';
 
+class DetalleTareaScreen extends StatelessWidget {
+  final Map<String, dynamic> tarea;
 
-
-class Proyecto {
-  final int id;
-  final String nombre;
-  final String descripcion;
-  final int porcentaje;
-  final String fechaInicio;
-  final String fechaFin;
-
-  Proyecto({
-    required this.id,
-    required this.nombre,
-    required this.descripcion,
-    required this.porcentaje,
-    required this.fechaInicio,
-    required this.fechaFin,
-  });
-
-  factory Proyecto.fromJson(Map<String, dynamic> json) {
-    return Proyecto(
-      id: json['proyecto_id'],
-      nombre: json['nombre'],
-      descripcion: json['descripcion'] ?? '',
-      porcentaje: json['porcentaje_progreso'] ?? 0,
-      fechaInicio: json['fecha_inicio'] ?? '',
-      fechaFin: json['fecha_fin'] ?? '',
-    );
-  }
-}
-
-class ProjectScreen extends StatefulWidget {
-  const ProjectScreen({super.key});
+  const DetalleTareaScreen({super.key, required this.tarea});
 
   @override
-  State<ProjectScreen> createState() => _ProjectScreenState();
-}
+  Widget build(BuildContext context) {
+    final List<Color> coloresNotas = [
+      Colors.teal.shade300,
+      Colors.orange.shade300,
+      Colors.purple.shade300,
+      Colors.green.shade300,
+      Colors.blue.shade300,
+      Colors.pink.shade300,
+    ];
 
-class _ProjectScreenState extends State<ProjectScreen> {
-  List<Proyecto> proyectos = [];
-  bool cargando = true;
-  final TextEditingController _searchController = TextEditingController();
+    final List<Map<String, String>> datos = [
+      {'Título': tarea['titulo'] ?? 'Sin título'},
+      {'Descripción': tarea['descripcion'] ?? 'Sin descripción'},
+      {'Fecha de inicio': tarea['fecha_inicio'] ?? 'Sin fecha'},
+      {'Fecha de fin': tarea['fecha_fin'] ?? 'Sin fecha'},
+      {'Estado': tarea['estado'] ?? 'Sin estado'},
+      {'Proyecto': tarea['nombre_proyecto'] ?? 'Sin proyecto asignado'},
+    ];
 
-  @override
-  void initState() {
-    super.initState();
-    fetchProyectos();
-  }
+    final List<dynamic> historial = tarea['historial_avances'] ?? [];
 
-Future<void> fetchProyectos() async {
-  try {
-    final data = await ApiService.fetchProyectos();
-    setState(() {
-      proyectos = data;
-      cargando = false;
-    });
-  } catch (e) {
-    setState(() => cargando = false);
-
-    if (e.toString().contains('Token expirado')) {
-      
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('token');
-
-      
-      Navigator.of(context).pushReplacementNamed('/login');
-      return;
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
-    }
-  }
-}
-
-
-
- @override
-Widget build(BuildContext context) {
-  return Scaffold(
-    
+    return Scaffold(
     appBar: PreferredSize(
-      preferredSize: const Size.fromHeight(100),
-      child: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xff00bcd4), Color(0xff00838f)], 
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black38,
-              offset: Offset(0, 3),
-              blurRadius: 8,
+        preferredSize: const Size.fromHeight(100),
+        child: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xff00bcd4), Color(0xff00838f)], // cyan degradado
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-          ],
-          borderRadius: BorderRadius.only(
-            bottomLeft: Radius.circular(30),
-            bottomRight: Radius.circular(30),
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
-            child: Row(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white24,
-                    shape: BoxShape.circle,
-                  ),
-                  padding: const EdgeInsets.all(8),
-                  child: const Icon(
-                    Icons.folder_open,
-                    color: Colors.white,
-                    size: 30,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  'Proyectos',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 28,
-                    fontWeight: FontWeight.w700,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black45,
-                        offset: Offset(1, 1),
-                        blurRadius: 4,
-                      ),
-                    ],
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const Spacer(),
-            
-                
-              ],
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black38,
+                offset: Offset(0, 3),
+                blurRadius: 8,
+              ),
+            ],
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
             ),
           ),
-        ),
-      ),
-    ),
-    body: cargando
-        ? const Center(child: CircularProgressIndicator())
-        : RefreshIndicator(
-            onRefresh: fetchProyectos,
-            child: SingleChildScrollView(
-              physics: const AlwaysScrollableScrollPhysics(),
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+          child: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+              child: Row(
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildStatusBox(
-                          proyectos.where((p) => p.porcentaje == 100).length.toString(),
-                          "Completados",
-                          Colors.green,
-                        ),
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white24,
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: _buildStatusBox(
-                          proyectos.where((p) => p.porcentaje < 100).length.toString(),
-                          "Sin terminar",
-                          Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  const Text("Proyectos", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const SizedBox(height: 10),
-                  TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      hintText: "Buscar proyecto...",
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          fetchProyectos();
-                        },
+                      padding: const EdgeInsets.all(8),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.white,
+                        size: 30,
                       ),
                     ),
-                    onChanged: (value) async {
-                      if (value.isEmpty) {
-                        fetchProyectos();
-                      } else {
-                        final resultados = await ApiService.buscarProyectosPorNombre(value);
-                        setState(() {
-                          proyectos = resultados;
-                        });
-                      }
-                    },
                   ),
-                  const SizedBox(height: 20),
-                  ...proyectos.map((proyecto) => Padding(
-                        padding: const EdgeInsets.only(bottom: 12),
-                        child: _buildProjectCard(
-                          proyecto,
-                          proyecto.porcentaje / 100.0,
-                          getColorForPercentage(proyecto.porcentaje),
+                  const SizedBox(width: 16),
+                  const Text(
+                    'Detalles de tarea',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      shadows: [
+                        Shadow(
+                          color: Colors.black45,
+                          offset: Offset(1, 1),
+                          blurRadius: 4,
                         ),
-                      )),
+                      ],
+                      letterSpacing: 1.2,
+                    ),
+                  ),
                 ],
               ),
             ),
           ),
-    floatingActionButton: FloatingActionButton(
-      backgroundColor: Colors.yellow[600],
-      child: const Icon(Icons.add, color: Colors.black),
-      onPressed: () async {
-        await Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const ProyectoForm()),
-        );
-        fetchProyectos();
-      },
-    ),
-    bottomNavigationBar: const CustomBottomNav(currentIndex: 0),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: ListView(
+          children: [
+            
+            ...datos.asMap().entries.map((entry) {
+              final index = entry.key;
+              final titulo = entry.value.keys.first;
+              final valor = entry.value[titulo]!;
+              final color = coloresNotas[index % coloresNotas.length];
+              return _detallePostIt(titulo, valor, color);
+            }),
+
+            const SizedBox(height: 20),
+
+            
+            const Text(
+              'Historial de avances',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            ),
+
+            const SizedBox(height: 12),
+
+            historial.isEmpty
+                ? const Text('No hay avances registrados.')
+                : _buildTimeline(historial, coloresNotas),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _detallePostIt(String titulo, String valor, Color color) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: color,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: color.withOpacity(0.6),
+            blurRadius: 10,
+            offset: const Offset(3, 5),
+          )
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(titulo,
+              style: const TextStyle(
+                  fontWeight: FontWeight.bold, fontSize: 16, color: Colors.white)),
+          const SizedBox(height: 6),
+          Text(valor, style: const TextStyle(fontSize: 15, color: Colors.white70)),
+        ],
+      ),
+    );
+  }
+Widget _buildTimeline(List<dynamic> historial, List<Color> coloresNotas) {
+  Map<String, Color> colorPorFecha = {};
+
+  Color obtenerColorParaFecha(String fecha) {
+    if (!colorPorFecha.containsKey(fecha)) {
+      colorPorFecha[fecha] = coloresNotas[colorPorFecha.length % coloresNotas.length];
+    }
+    return colorPorFecha[fecha]!;
+  }
+
+  return Column(
+    children: historial.asMap().entries.map((entry) {
+      final index = entry.key;
+      final avance = entry.value;
+
+      String fechaCompleta = avance['fecha_registro'] ?? 'Sin fecha';
+      String fechaDia = fechaCompleta.split(' ').first;
+
+      final color = obtenerColorParaFecha(fechaDia);
+      final porcentaje = avance['porcentaje']?.toString() ?? '0';
+      final motivo = avance['motivo'] ?? 'Sin motivo';
+      final usuario = avance['nombre_usuario']?.toString() ?? 'Desconocido';
+      final isLast = index == historial.length - 1;
+
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Indicador y línea de tiempo
+            Column(
+              children: [
+                Container(
+                  width: 20,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: color,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: Colors.white, width: 3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: color.withOpacity(0.7),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                ),
+                if (!isLast)
+                  Container(
+                    width: 4,
+                    height: 80,
+                    color: color.withOpacity(0.5),
+                  ),
+              ],
+            ),
+
+            const SizedBox(width: 12),
+
+            // Tarjeta de avance
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 6,
+                      offset: const Offset(2, 3),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Fecha y usuario
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(fechaCompleta,
+                            style: const TextStyle(
+                                color: Colors.black54, fontSize: 12)),
+                        Text(usuario,
+                            style: const TextStyle(
+                                color: Colors.black54, fontSize: 12)),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Porcentaje con barra de progreso
+                    Row(
+                      children: [
+                        Expanded(
+                          child: LinearProgressIndicator(
+                            value: int.tryParse(porcentaje) != null
+                                ? int.parse(porcentaje) / 100
+                                : 0,
+                            backgroundColor: color.withOpacity(0.2),
+                            color: color,
+                            minHeight: 8,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '$porcentaje%',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: color,
+                              fontSize: 14),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Motivo
+                    Text(
+                      motivo,
+                      style:
+                          const TextStyle(fontSize: 15, color: Colors.black87),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }).toList(),
   );
 }
 
-  Widget _buildStatusBox(String count, String label, Color color) {
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(count, style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold, color: color)),
-            Text(label, style: TextStyle(fontSize: 14, color: color)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProjectCard(Proyecto proyecto, double progress, Color color) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: () => _showProjectOptions(proyecto),
-      child: Card(
-        elevation: 5,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        shadowColor: Colors.black45,
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                proyecto.nombre,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 6),
-              Text(
-                proyecto.descripcion,
-                style: const TextStyle(color: Colors.black54, fontSize: 14),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 10),
-              
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  double fullWidth = constraints.maxWidth;
-                  return Stack(
-                    children: [
-                      Container(
-                        height: 22,
-                        width: fullWidth,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300],
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 600),
-                        curve: Curves.easeInOut,
-                        height: 22,
-                        width: fullWidth * progress.clamp(0.0, 1.0),
-                        decoration: BoxDecoration(
-                          color: color,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      Positioned.fill(
-                        child: Center(
-                          child: Text(
-                            '${proyecto.porcentaje}%',
-  style: const TextStyle(
-    color: Colors.white,
-    fontWeight: FontWeight.bold,
-    shadows: [
-      Shadow(
-        blurRadius: 4,
-        color: Colors.black38,
-        offset: Offset(1, 1),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  void _showProjectOptions(Proyecto proyecto) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
-      isScrollControlled: true,
-      builder: (_) {
-        return DraggableScrollableSheet(
-          expand: false,
-          maxChildSize: 0.9,
-          minChildSize: 0.3,
-          initialChildSize: 0.5,
-          builder: (context, scrollController) {
-            return SingleChildScrollView(
-              controller: scrollController,
-              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 50,
-                    height: 5,
-                    decoration: BoxDecoration(
-                      color: Colors.grey[300],
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    proyecto.nombre,
-                    style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 10),
-                  ListTile(
-                    leading: const Icon(Icons.visibility, color: Colors.blue),
-                    title: const Text('Ver detalles'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => DetallesProyectoScreen(proyectoId: proyecto.id),
-                        ),
-                      );
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.timeline, color: Colors.indigo),
-                    title: const Text('Ver Diagrama de Gantt'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => PantallaSugerida(
-                            siguientePantalla: DiagramaGantt(
-                              proyectoId: proyecto.id,
-                              nombreProyecto: proyecto.nombre,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-
-                  ListTile(
-                        leading: const Icon(Icons.view_carousel, color: Colors.purple),
-                        title: const Text('Ver Carrusel de Tareas'),
-                        onTap: () {
-                          Navigator.pop(context); 
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => CarruselProgresoTareas(proyectoId: proyecto.id, nombreProyecto: proyecto.nombre),
-                            ),
-                          );
-                        },
-                      ),
-
-                  ListTile(
-                leading: const Icon(Icons.bar_chart, color: Colors.teal),
-                title: const Text('Resumen de tareas'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => PantallaSugerida(
-                      siguientePantalla: EstadisticasScreen(
-                        proyectoId: proyecto.id,
-                        nombreProyecto: proyecto.nombre,
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-
-
-                  ListTile(
-                    leading: const Icon(Icons.edit, color: Colors.orange),
-                    title: const Text('Editar'),
-                    onTap: () {
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ProyectoForm(
-                            proyecto: {
-                              'proyecto_id': proyecto.id,
-                              'nombre': proyecto.nombre,
-                              'descripcion': proyecto.descripcion,
-                              'fecha_inicio': proyecto.fechaInicio,
-                              'fecha_fin': proyecto.fechaFin,
-                              'porcentaje_progreso': proyecto.porcentaje,
-                            },
-                          ),
-                        ),
-                      ).then((_) => fetchProyectos());
-                    },
-                  ),
-                  ListTile(
-                    leading: const Icon(Icons.delete, color: Colors.red),
-                    title: const Text('Eliminar', style: TextStyle(color: Colors.red)),
-                    onTap: () {
-                      Navigator.pop(context);
-                      showDialog(
-                        context: context,
-                        builder: (ctx) => AlertDialog(
-                          title: const Text("Confirmar eliminación"),
-                          content: const Text("¿Seguro que deseas eliminar este proyecto?"),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(ctx),
-                              child: const Text("Cancelar"),
-                            ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.pop(ctx);
-                                eliminarProyecto(proyecto.id);
-                              },
-                              child: const Text("Eliminar", style: TextStyle(color: Colors.red)),
-                            ),
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                  const SizedBox(height: 10),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  Color getColorForPercentage(int porcentaje) {
-    if (porcentaje == 100) {
-      return Colors.green;
-    } else if (porcentaje > 50) {
-      return Colors.amber[700]!;
-    } else {
-      return Colors.red;
-    }
-  }
-
-  Future<void> eliminarProyecto(int id) async {
-    final exito = await ApiService.eliminarProyecto(id);
-    if (exito) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Proyecto eliminado')),
-      );
-      fetchProyectos();
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Error al eliminar')),
-      );
-    }
-  }
 }
