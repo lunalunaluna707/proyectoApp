@@ -151,9 +151,7 @@ class DetalleTareaScreen extends StatelessWidget {
       ),
     );
   }
-
 Widget _buildTimeline(List<dynamic> historial, List<Color> coloresNotas) {
-
   Map<String, Color> colorPorFecha = {};
 
   Color obtenerColorParaFecha(String fecha) {
@@ -167,27 +165,24 @@ Widget _buildTimeline(List<dynamic> historial, List<Color> coloresNotas) {
     children: historial.asMap().entries.map((entry) {
       final index = entry.key;
       final avance = entry.value;
-     
+
       String fechaCompleta = avance['fecha_registro'] ?? 'Sin fecha';
       String fechaDia = fechaCompleta.split(' ').first;
 
       final color = obtenerColorParaFecha(fechaDia);
-
       final porcentaje = avance['porcentaje']?.toString() ?? '0';
       final motivo = avance['motivo'] ?? 'Sin motivo';
       final usuario = avance['nombre_usuario']?.toString() ?? 'Desconocido';
-
       final isLast = index == historial.length - 1;
 
-      return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          
-          Container(
-            width: 40,
-            child: Column(
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Indicador y línea de tiempo
+            Column(
               children: [
-               
                 Container(
                   width: 20,
                   height: 20,
@@ -204,78 +199,91 @@ Widget _buildTimeline(List<dynamic> historial, List<Color> coloresNotas) {
                     ],
                   ),
                 ),
-
-                
                 if (!isLast)
                   Container(
-                    height: 80,
                     width: 4,
-                    color: color.withOpacity(0.7),
+                    height: 80,
+                    color: color.withOpacity(0.5),
                   ),
               ],
             ),
-          ),
-          Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(bottom: 16),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.85),
-                borderRadius: BorderRadius.circular(12),
-                boxShadow: [
-                  BoxShadow(
-                    color: color.withOpacity(0.5),
-                    blurRadius: 8,
-                    offset: const Offset(2, 4),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        fechaCompleta,
-                        style: const TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                      Text(
-                        'Usuario: $usuario',
-                        style: const TextStyle(color: Colors.white70, fontSize: 12),
-                      ),
-                    ],
-                  ),
 
-                  const SizedBox(height: 8),
+            const SizedBox(width: 12),
 
-                
-                  Text(
-                    '$porcentaje%',
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 22,
-                      color: Colors.white,
+            // Tarjeta de avance
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black12,
+                      blurRadius: 6,
+                      offset: const Offset(2, 3),
                     ),
-                  ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Fecha y usuario
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(fechaCompleta,
+                            style: const TextStyle(
+                                color: Colors.black54, fontSize: 12)),
+                        Text(usuario,
+                            style: const TextStyle(
+                                color: Colors.black54, fontSize: 12)),
+                      ],
+                    ),
 
-                  const SizedBox(height: 8),
+                    const SizedBox(height: 8),
 
-                
-                  Text(
-                    motivo,
-                    style: const TextStyle(fontSize: 15, color: Colors.white70),
-                  ),
-                ],
+                    // Porcentaje con barra de progreso
+                    Row(
+                      children: [
+                        Expanded(
+                          child: LinearProgressIndicator(
+                            value: int.tryParse(porcentaje) != null
+                                ? int.parse(porcentaje) / 100
+                                : 0,
+                            backgroundColor: color.withOpacity(0.2),
+                            color: color,
+                            minHeight: 8,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '$porcentaje%',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: color,
+                              fontSize: 14),
+                        ),
+                      ],
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // Motivo
+                    Text(
+                      motivo,
+                      style:
+                          const TextStyle(fontSize: 15, color: Colors.black87),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       );
     }).toList(),
   );
 }
-
 
 }
