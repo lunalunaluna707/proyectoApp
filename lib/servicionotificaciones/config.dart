@@ -1,3 +1,4 @@
 class Config {
-  static const String baseUrl = 'https://4ccedf87266b.ngrok-free.app';
+  static const String baseUrl = 'https://api-wmw8.onrender.com';
+
 }
