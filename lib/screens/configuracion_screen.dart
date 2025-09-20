@@ -252,7 +252,7 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen>
 
   Future<void> eliminarTokenFcmDelServidor(int userId) async {
     final uri = Uri.parse(
-        "http://192.168.1.38:5000/tokens-fcm/$userId");
+        "https://api-wmw8.onrender.com/tokens-fcm/$userId");
     final response = await http.delete(uri);
 
     if (response.statusCode == 200) {
@@ -262,3 +262,4 @@ class _ConfiguracionScreenState extends State<ConfiguracionScreen>
     }
   }
 }
+
